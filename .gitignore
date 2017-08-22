@@ -1,0 +1,13 @@
+**/bower_components/
+/build/
+/dist/
+**/node_modules/
+.idea/
+**/.browse.VC.db*
+node_modules/
+bower_components/
+**/unitTest/coverage/
+.DS_Store
+**/.DS_Store
+package.json.rej
+package-lock.json
