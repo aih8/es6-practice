@@ -1,10 +1,10 @@
 import $ from 'jquery';
 
-console.log(' js file is done ... ', $);
+console.log(' js file is done ... ', this, window);
 
-function fn() {
+(() => {
     let a = 5;
-    window.locatio.href
-}
+    console.log('a : ', a, this)
+})();
 
-fn()
+console.log(new Set([1, 4, 5, 1, 4, 5]))

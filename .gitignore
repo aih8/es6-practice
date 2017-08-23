@@ -11,3 +11,4 @@ bower_components/
 **/.DS_Store
 package.json.rej
 package-lock.json
+**/*.es5.js
