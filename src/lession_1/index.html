@@ -3,20 +3,47 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
-
+    <title>canvas-taiji</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <!-- build:css css/combined.css -->
     <link href="css/**/*" rel="stylesheet">
     <!-- endbuild -->
-
     <!-- build:js js/combined.js -->
     <script type="text/javascript" src="js/index.js"></script>
     <!-- endbuild -->
-
 </head>
 
 <body>
-    <div>
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <div class="myCanavsCon">
+                <canvas id="myCanavs" width="720" height="450">
+                    浏览器不支持canvas，请使用新版浏览器打开
+                </canvas>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <div class="pt70">
+                <input class="btn btn-lg btn-default" type="button" value="暂停" id="action">
+                <input class="btn btn-lg btn-default" type="button" value="顺时针" id="direction">
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <div class="rangeContainer" >
+                <div id="slider">
+                    <input class="bar" type="range" min="1" max="10" id="rangeinput" value="1" />
+                    <span class="highlight"></span>
+                    <output id="rangevalue">1</output>
+                </div>
+                <div>速度阀</div>
+            </div>
+        </div>
     </div>
 </body>
 
