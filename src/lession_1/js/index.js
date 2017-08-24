@@ -36,6 +36,7 @@ class Taiji {
         const { width, height } = myCanavs;
         this.canvas = myCanavs;
         this.ctx = myCanavs.getContext('2d');
+
         this.width = width;
         this.height = height;
         this.radius = radius < (width / 2) ? radius : (width / 2);
@@ -52,7 +53,7 @@ class Taiji {
         this.ctx.clearRect(0, 0, this.width, this.height);
     }
 
-    drawWrapCircle() {
+    draw() {
         const { radius, width, height, smallRadius } = this;
         let halfRadius = radius / 2;
         let centerX = width / 2;
@@ -60,6 +61,8 @@ class Taiji {
 
         //大的黑色半圆
         this.drawCircle('#000', radius, undefined, undefined, 0, 0, 0.5 * Math.PI, 1.5 * Math.PI);
+        //大的黑色半圆
+        this.drawCircle('#fff', radius, undefined, undefined, 0, 0, 1.5 * Math.PI, 2.5 * Math.PI);
         //中等上部白色半圆
         this.drawCircle('#fff', halfRadius, undefined, undefined, 0, -halfRadius);
         //中等下部黑色半圆
@@ -109,17 +112,30 @@ class Taiji {
         this.action();
     }
 
-    changeDeg (newSpeed) {
-    	this.speed = newSpeed;
+    changeDeg(newSpeed) {
+        this.speed = newSpeed;
+    }
+
+    changeDegwhenMove() {
+        const { ctx, nishizhen, deg, speed } = this;
+        let nextDeg = nishizhen ? (deg - speed) : (deg + speed),
+            dealDeg;
+        if (nextDeg <= -180) {
+            dealDeg = nextDeg + 360;
+        } else if (nextDeg > 180) {
+            dealDeg = nextDeg - 360;
+        } else {
+            dealDeg = nextDeg;
+        }
+        this.deg = dealDeg;
     }
 
     action() {
         const { ctx, nishizhen, deg, speed } = this;
         this.id = requestAnimationFrame(() => {
-            this.deg = nishizhen ? (deg - speed) : (deg + speed);
-            console.log(this.speed, nishizhen, deg)
+            this.changeDegwhenMove();
             this.clear();
-            this.drawWrapCircle();
+            this.draw();
             if (this.status) {
                 this.action();
             }
@@ -144,7 +160,6 @@ $(() => {
     const rangevalue = $('#rangevalue');
 
     const taiji = new Taiji(myCanavs, 160, 20);
-    // taiji.move();
 
     button.on('click', (e) => {
         let value = e.target.value;
@@ -173,8 +188,8 @@ $(() => {
     });
 
     rangeinput.on('change', (e) => {
-    	let value = e.target.value;
-    	rangevalue.html(value);
-    	taiji.changeDeg(Number(value));
+        let value = e.target.value;
+        rangevalue.html(value);
+        taiji.changeDeg(Number(value));
     })
 });
