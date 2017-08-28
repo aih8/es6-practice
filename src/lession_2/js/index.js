@@ -1,4 +1,3 @@
-console.log('fuck this project ...');
 
 
 let mergeSort = (arr) => {

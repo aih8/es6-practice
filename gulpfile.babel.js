@@ -5,9 +5,10 @@ import lazypipe from 'lazypipe';
 import runSequence from 'run-sequence';
 import glob from 'glob';
 import mergeStream from 'merge-stream';
-const $ = gulpLoadPlugins();
+import pngquant from 'imagemin-pngquant';
 
-const HTML_OBJECT = getEntries('./src/**/*.html');
+const $ = gulpLoadPlugins();
+const HTML_OBJECT = getEntries('src/**/*.html');
 
 const babel = lazypipe()
     .pipe($.babel, {
@@ -24,7 +25,7 @@ const babel = lazypipe()
     });
 
 gulp.task('default', (cb) => {
-    runSequence('clean:dist', ['build', 'toEs5'], 'server', 'watch', cb);
+    runSequence('clean:dist', ['build', 'toEs5', 'copy:images'], 'server', 'watch', cb);
 });
 
 gulp.task('build', () => {
@@ -54,16 +55,29 @@ gulp.task('build', () => {
 })
 
 gulp.task('watch', () => {
-    gulp.watch(['./src/**/*', '!src/**/*.js'], ['build']);
+    gulp.watch(['src/**/*', '!src/**/*.js'], ['build']);
 
     gulp.watch(['src/**/*.js', '!src/**/*.es5.js'], ['build', 'toEs5']);
+
+    gulp.watch(['src/**/images/**/*'], ['copy:images']);
 });
 
 gulp.task('toEs5', () => {
-    return gulp.src(['./src/**/*.js', '!src/**/*.es5.js'])
+    return gulp.src(['src/**/*.js', '!src/**/*.es5.js'])
         .pipe(babel())
         .pipe($.rename({ suffix: '.es5' }))
         .pipe(gulp.dest('./src'));
+});
+
+gulp.task('copy:images', () => {
+    return gulp.src(['src/**/images/**/*'])
+        .pipe($.cache($.imagemin({
+            progressive: true,
+            svgoPlugins: [{ removeViewBox: false }],
+            use: [pngquant()]
+        })))
+        .pipe(gulp.dest('dist'))
+
 })
 
 gulp.task('server', () => {
