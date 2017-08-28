@@ -39,6 +39,13 @@ class Taiji {
 
         this.width = width;
         this.height = height;
+
+        this.ox = width / 2;
+        this.oy = height / 2;
+
+        this.ox_speed = 1;
+        this.oy_speed = 1;
+
         this.radius = radius < (width / 2) ? radius : (width / 2);
         this.smallRadius = smallRadius;
         this.deg = deg || 0;
@@ -54,23 +61,23 @@ class Taiji {
     }
 
     draw() {
-        const { radius, width, height, smallRadius } = this;
+        const { radius, width, height, smallRadius, ox, oy } = this;
         let halfRadius = radius / 2;
         let centerX = width / 2;
         let centerY = height / 2;
 
         //大的黑色半圆
-        this.drawCircle('#000', radius, undefined, undefined, 0, 0, 0.5 * Math.PI, 1.5 * Math.PI);
+        this.drawCircle('#000', radius, ox, oy, 0, 0, 0.5 * Math.PI, 1.5 * Math.PI);
         //大的黑色半圆
-        this.drawCircle('#fff', radius, undefined, undefined, 0, 0, 1.5 * Math.PI, 2.5 * Math.PI);
+        this.drawCircle('#fff', radius, ox, oy, 0, 0, 1.5 * Math.PI, 2.5 * Math.PI);
         //中等上部白色半圆
-        this.drawCircle('#fff', halfRadius, undefined, undefined, 0, -halfRadius);
+        this.drawCircle('#fff', halfRadius, ox, oy, 0, -halfRadius);
         //中等下部黑色半圆
-        this.drawCircle('#000', halfRadius, undefined, undefined, 0, halfRadius);
+        this.drawCircle('#000', halfRadius, ox, oy, 0, halfRadius);
         //小黑圆
-        this.drawCircle('#000', smallRadius, undefined, undefined, 0, -halfRadius);
+        this.drawCircle('#000', smallRadius, ox, oy, 0, -halfRadius);
         //小白圆
-        this.drawCircle('#fff', smallRadius, undefined, undefined, 0, halfRadius);
+        this.drawCircle('#fff', smallRadius, ox, oy, 0, halfRadius);
         //外部灰色线
         this.drawCircleStrock('#dedede', radius);
     }
@@ -89,10 +96,10 @@ class Taiji {
     }
 
     drawCircleStrock(color, radius, x, y) {
-        const { ctx, width, height, deg } = this;
+        const { ctx, width, height, deg, ox, oy } = this;
         ctx.save();
         ctx.beginPath();
-        ctx.translate(x || width / 2, y || height / 2);
+        ctx.translate(ox, oy);
         ctx.rotate(deg * Math.PI / 180);
         ctx.strokeStyle = color;
         ctx.lineWidth = 1;
@@ -133,9 +140,19 @@ class Taiji {
     action() {
         const { ctx, nishizhen, deg, speed } = this;
         this.id = requestAnimationFrame(() => {
+            console.log(`方向：${ nishizhen }；   速度 ：${ speed }；  角度：${ deg }；`);
+            //更新旋转角度。deg
             this.changeDegwhenMove();
+
+            //设置太极的中心
+            this.resetTaijiCenter();
+
+            //清空画布
             this.clear();
+
+            //绘图
             this.draw();
+
             if (this.status) {
                 this.action();
             }
@@ -150,6 +167,22 @@ class Taiji {
         }
     }
 
+    resetTaijiCenter () {
+    	let { ox, oy, ox_speed, oy_speed, radius, width, height } = this;
+    	let nextOx = ox + ox_speed;
+    	let nextOy = oy + oy_speed;
+
+    	if (nextOx - radius <= 0 || nextOx + radius >= width) {
+    		this.ox_speed = -ox_speed;
+    	}
+
+    	if (nextOy - radius <= 0 || nextOy + radius >= height) {
+    		this.oy_speed = -oy_speed;
+    	}
+
+    	this.ox = nextOx;
+    	this.oy = nextOy;
+    }
 }
 
 $(() => {
