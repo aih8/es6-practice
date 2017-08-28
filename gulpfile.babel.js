@@ -10,6 +10,7 @@ import pngquant from 'imagemin-pngquant';
 const $ = gulpLoadPlugins();
 const HTML_OBJECT = getEntries('src/**/*.html');
 
+//提取公共打包流程
 const babel = lazypipe()
     .pipe($.babel, {
         "presets": [
@@ -24,10 +25,7 @@ const babel = lazypipe()
         "plugins": ["transform-runtime"]
     });
 
-gulp.task('default', (cb) => {
-    runSequence('clean:dist', ['build', 'toEs5', 'copy:images'], 'server', 'watch', cb);
-});
-
+//项目打包task
 gulp.task('build', () => {
     let task = [];
 
@@ -50,10 +48,10 @@ gulp.task('build', () => {
             .pipe($.connect.reload()));
     }
 
-
     return mergeStream(task);
 })
 
+//监听项目变动
 gulp.task('watch', () => {
     gulp.watch(['src/**/*', '!src/**/*.js'], ['build']);
 
@@ -62,6 +60,7 @@ gulp.task('watch', () => {
     gulp.watch(['src/**/images/**/*'], ['copy:images']);
 });
 
+//将es6转化为es5,方便查看，可注掉，
 gulp.task('toEs5', () => {
     return gulp.src(['src/**/*.js', '!src/**/*.es5.js'])
         .pipe(babel())
@@ -69,6 +68,7 @@ gulp.task('toEs5', () => {
         .pipe(gulp.dest('./src'));
 });
 
+//复制 && 压缩 图片
 gulp.task('copy:images', () => {
     return gulp.src(['src/**/images/**/*'])
         .pipe($.cache($.imagemin({
@@ -80,6 +80,7 @@ gulp.task('copy:images', () => {
 
 })
 
+//启动本地服务
 gulp.task('server', () => {
     return $.connect.server({
         port: 9000,
@@ -89,8 +90,16 @@ gulp.task('server', () => {
     });
 });
 
+//清空打包文件夹
 gulp.task('clean:dist', () => {
     return del(['dist/**/*']);
+});
+
+
+//默认任务
+gulp.task('default', (cb) => {
+    //按顺序执行任务；
+    runSequence('clean:dist', ['build', 'toEs5', 'copy:images'], 'server', 'watch', cb);
 });
 
 
