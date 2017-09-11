@@ -22,7 +22,7 @@ const babel = lazypipe()
             }]
         ],
         //可引入Set等新API的polyfill
-        "plugins": ["transform-runtime"]
+        "plugins": ["transform-decorators-legacy", "transform-runtime"]
     });
 
 //项目打包task
